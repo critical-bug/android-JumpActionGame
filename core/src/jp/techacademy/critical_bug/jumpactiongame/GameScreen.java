@@ -11,8 +11,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class GameScreen extends ScreenAdapter {
-    private static final float CAMERA_HEIGHT = 15;
-    private static final float CAMERA_WIDTH = 10;
+    private static final float CAMERA_HEIGHT = 15f;
+    private static final float CAMERA_WIDTH = 10f;
+    public static final float GRAVITY = -12f;
+    public static final float WORLD_WIDTH = 10f;
     private final JumpActionGame mGame;
     private final Sprite mBg;
     private final OrthographicCamera mCamera;

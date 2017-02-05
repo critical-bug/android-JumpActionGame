@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class Star extends GameObject {
     private static final float STAR_WIDTH = 0.8f;
-    private static final float STAR_HEIGHT = 0.8f;
+    static final float STAR_HEIGHT = 0.8f;
 
     private enum State {None, Exist}
     private State mState;

@@ -7,10 +7,10 @@ import com.badlogic.gdx.graphics.Texture;
  */
 public class Step extends GameObject {
 
-    private static final float STEP_WIDTH = 2.0f;
-    private static final float STEP_HEIGHT = 0.5f;
+    static final float STEP_WIDTH = 2.0f;
+    static final float STEP_HEIGHT = 0.5f;
     private enum State {Vanish};
-    private enum Type {Static, Moving};
+    enum Type {Static, Moving};
     private static final float STEP_VELOCITY = 2.0f;
     private State mState;
     private final Type mType;

@@ -6,7 +6,7 @@ public class Player extends GameObject {
     private static final float PLAYER_WIDTH = 1.0f;
     private static final float PLAYER_HEIGHT = 1.0f;
     private static final float PLAYER_MOVE_VELOCITY = 20.0f;
-    private static final float PLAYER_JUMP_VELOCITY = 11.0f;
+    static final float PLAYER_JUMP_VELOCITY = 11.0f;
     private State mState;
     private enum State {Jump, Fall};
 

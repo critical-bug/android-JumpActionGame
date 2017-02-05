@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 class GameObject extends Sprite {
     final Vector2 velocity;
 
-    GameObject(Texture texture, int srcX, int srcY, int srcWidth, int srcHeight) {
+    GameObject(final Texture texture, final int srcX, final int srcY, final int srcWidth, final int srcHeight) {
         super(texture, srcX, srcY, srcWidth, srcHeight);
         velocity = new Vector2();
     }

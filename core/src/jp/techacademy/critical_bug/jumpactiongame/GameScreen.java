@@ -159,6 +159,48 @@ class GameScreen extends ScreenAdapter {
         }
         mPlayer.update(delta, accel);
         mHeightSoFar = Math.max(mPlayer.getY(), mHeightSoFar);
+
+        checkCollision();
+    }
+
+    /**
+     * 当たり判定して mGameState や物体の位置をアップデートする
+     */
+    private void checkCollision() {
+        // UFOに当たったらゴール
+        if (mPlayer.getBoundingRectangle().overlaps(mUfo.getBoundingRectangle())) {
+            mGameState = GameState.Gameover;
+            return;
+        }
+        // starに当たったら回収
+        for (final Star star : mStars) {
+            if (star.mState == Star.State.None) {
+                continue;
+            }
+            if (mPlayer.getBoundingRectangle().overlaps(star.getBoundingRectangle())) {
+                star.get();
+                break;
+            }
+        }
+        // 上昇中はStepとの当たり判定を確認しない
+        if (mPlayer.velocity.y > 0) {
+            return;
+        }
+        for (final Step step : mSteps) {
+            if (step.mState == Step.State.Vanish) {
+                continue;
+            }
+            if (mPlayer.getY() > step.getY()) {
+                if (mPlayer.getBoundingRectangle().overlaps(step.getBoundingRectangle())) {
+                    mPlayer.hitStep();
+                    // 踏み台と当たった場合 適当な確率で踏み台を消す
+                    if (mRandom.nextFloat() > 0.5f) {
+                        step.vanish();
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     private void updateReady() {

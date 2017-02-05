@@ -1,24 +1,25 @@
 package jp.techacademy.critical_bug.jumpactiongame;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public class GameScreen extends ScreenAdapter {
+class GameScreen extends ScreenAdapter {
     private static final float CAMERA_HEIGHT = 15f;
     private static final float CAMERA_WIDTH = 10f;
-    public static final float GRAVITY = -12f;
-    public static final float WORLD_WIDTH = 10f;
-    public static final float WORLD_HEIGHT = CAMERA_HEIGHT * 20; // 20画面分登れば終了;
+    static final float GRAVITY = -12f;
+    static final float WORLD_WIDTH = 10f;
+    static final float WORLD_HEIGHT = CAMERA_HEIGHT * 20; // 20画面分登れば終了;
     private final JumpActionGame mGame;
     private final Sprite mBg;
     private final OrthographicCamera mCamera;
@@ -26,17 +27,19 @@ public class GameScreen extends ScreenAdapter {
     private final Random mRandom;
     private final ArrayList<Step> mSteps;
     private final ArrayList<Star> mStars;
-    private final GameState mGameState;
     private final Ufo mUfo;
     private final Player mPlayer;
+    private final Vector3 mTouchPoint;
+    private GameState mGameState;
+    private float mHeightSoFar;
 
-    enum GameState {Ready,Playing,Gameover};
+    enum GameState {Ready,Playing,Gameover}
 
-    public GameScreen(final JumpActionGame game) {
+    GameScreen(final JumpActionGame game) {
         mGame = game;
         Texture bgTexture = new Texture("back.png");
         // TextureRegionで切り出す時の原点は左上
-        mBg = new Sprite( new TextureRegion(bgTexture, 0, 0, 540, 810));
+        mBg = new Sprite(new TextureRegion(bgTexture, 0, 0, 540, 810));
         mBg.setSize(CAMERA_WIDTH, CAMERA_HEIGHT);
         mBg.setPosition(0, 0);
 
@@ -48,6 +51,7 @@ public class GameScreen extends ScreenAdapter {
         mSteps = new ArrayList<Step>();
         mStars = new ArrayList<Star>();
         mGameState = GameState.Ready;
+        mTouchPoint = new Vector3();
 
         float y = createStage();
 
@@ -108,20 +112,59 @@ public class GameScreen extends ScreenAdapter {
             star.draw(mGame.batch);
         }
         mUfo.draw(mGame.batch);
+        mPlayer.draw(mGame.batch);
+
         mGame.batch.end();
     }
 
     private void update(final float delta) {
         switch (mGameState) {
             case Ready:
-                // TODO
+                updateReady();
                 break;
             case Playing:
-                // TODO
+                updatePlaying(delta);
                 break;
             case Gameover:
-                // TODO
+                updateGameOver();
                 break;
+        }
+    }
+
+    private void updateGameOver() {
+
+    }
+
+    private void updatePlaying(final float delta) {
+        float accel = 0;
+        if (Gdx.input.isTouched()) {
+            mViewPort.unproject(mTouchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+            Rectangle left = new Rectangle(0, 0, CAMERA_WIDTH / 2, CAMERA_HEIGHT);
+            Rectangle right = new Rectangle(CAMERA_WIDTH / 2, 0, CAMERA_WIDTH / 2, CAMERA_HEIGHT);
+            if (left.contains(mTouchPoint.x, mTouchPoint.y)) {
+                accel = 5.0f;
+            }
+            if (right.contains(mTouchPoint.x, mTouchPoint.y)) {
+                accel = -5.0f;
+            }
+        }
+
+        for (final Step step : mSteps) {
+            step.update(delta);
+        }
+
+        // Player ?
+        if (mPlayer.getY() <= 0.5f) {
+            mPlayer.hitStep();
+        }
+        mPlayer.update(delta, accel);
+        mHeightSoFar = Math.max(mPlayer.getY(), mHeightSoFar);
+    }
+
+    private void updateReady() {
+        // タッチでゲーム開始
+        if (Gdx.input.justTouched()) {
+            mGameState = GameState.Playing;
         }
     }
 

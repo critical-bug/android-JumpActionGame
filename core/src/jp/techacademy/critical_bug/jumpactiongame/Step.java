@@ -2,20 +2,18 @@ package jp.techacademy.critical_bug.jumpactiongame;
 
 import com.badlogic.gdx.graphics.Texture;
 
-/**
- * 足場は初期位置で静止しているタイプと左右に移動するタイプが存在する
- */
-public class Step extends GameObject {
+class Step extends GameObject {
 
     static final float STEP_WIDTH = 2.0f;
     static final float STEP_HEIGHT = 0.5f;
-    private enum State {Vanish};
-    enum Type {Static, Moving};
+    private enum State {Vanish}
+    enum Type {Static, Moving}
+
     private static final float STEP_VELOCITY = 2.0f;
     private State mState;
     private final Type mType;
 
-    public Step(Type type, final Texture texture, final int srcX, final int srcY, final int srcWidth, final int srcHeight) {
+    Step(Type type, final Texture texture, final int srcX, final int srcY, final int srcWidth, final int srcHeight) {
         super(texture, srcX, srcY, srcWidth, srcHeight);
         setSize(STEP_WIDTH, STEP_HEIGHT);
         mType = type;
@@ -24,7 +22,7 @@ public class Step extends GameObject {
         }
     }
 
-    public void update(float deltaTime) {
+    void update(float deltaTime) {
         switch (mType) {
             case Moving:
             setX(getX() + velocity.x * deltaTime);

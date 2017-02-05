@@ -2,21 +2,21 @@ package jp.techacademy.critical_bug.jumpactiongame;
 
 import com.badlogic.gdx.graphics.Texture;
 
-public class Player extends GameObject {
+class Player extends GameObject {
     private static final float PLAYER_WIDTH = 1.0f;
     private static final float PLAYER_HEIGHT = 1.0f;
     private static final float PLAYER_MOVE_VELOCITY = 20.0f;
     static final float PLAYER_JUMP_VELOCITY = 11.0f;
     private State mState;
-    private enum State {Jump, Fall};
+    private enum State {Jump, Fall}
 
-    public Player(final Texture texture, final int srcX, final int srcY, final int srcWidth, final int srcHeight) {
+    Player(final Texture texture, final int srcX, final int srcY, final int srcWidth, final int srcHeight) {
         super(texture, srcX, srcY, srcWidth, srcHeight);
         setSize(PLAYER_WIDTH, PLAYER_HEIGHT);
         mState = State.Fall;
     }
 
-    public void update(float delta, float accelX) {
+    void update(float delta, float accelX) {
         // 重力をプレイヤーの速度に加算し、速度から位置を計算する
         velocity.add(0, GameScreen.GRAVITY * delta);
         velocity.x = -accelX / 10 * PLAYER_MOVE_VELOCITY;
@@ -44,7 +44,7 @@ public class Player extends GameObject {
         }
     }
 
-    public void hitStep() {
+    void hitStep() {
         velocity.y = PLAYER_JUMP_VELOCITY;
         mState = State.Jump;
     }

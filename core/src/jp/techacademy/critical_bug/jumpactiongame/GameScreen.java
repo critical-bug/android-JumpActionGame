@@ -5,6 +5,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
@@ -34,8 +35,11 @@ class GameScreen extends ScreenAdapter {
     private final Vector3 mTouchPoint;
     private final OrthographicCamera mGuiCamera;
     private final FitViewport mGuiViewPort;
+    private final BitmapFont mFont;
     private GameState mGameState;
     private float mHeightSoFar;
+    private int mScore;
+    private int mHighScore;
 
     enum GameState {Ready,Playing,Gameover}
 
@@ -52,8 +56,8 @@ class GameScreen extends ScreenAdapter {
         mViewPort = new FitViewport(CAMERA_WIDTH, CAMERA_HEIGHT);
 
         // GUI用のカメラを設定する
-        mGuiCamera = new OrthographicCamera(); // ←追加する
-        mGuiCamera.setToOrtho(false, GUI_WIDTH, GUI_HEIGHT); // ←追加する
+        mGuiCamera = new OrthographicCamera();
+        mGuiCamera.setToOrtho(false, GUI_WIDTH, GUI_HEIGHT);
         mGuiViewPort = new FitViewport(GUI_WIDTH, GUI_HEIGHT, mGuiCamera);
 
         mRandom = new Random();
@@ -61,6 +65,11 @@ class GameScreen extends ScreenAdapter {
         mStars = new ArrayList<Star>();
         mGameState = GameState.Ready;
         mTouchPoint = new Vector3();
+
+        mFont = new BitmapFont(Gdx.files.internal("font.fnt"), Gdx.files.internal("font.png"), false);
+        mFont.getData().setScale(0.8f);
+        mScore = 0;
+        mHighScore = 0;
 
         float y = createStage();
 
@@ -128,6 +137,13 @@ class GameScreen extends ScreenAdapter {
         mPlayer.draw(mGame.batch);
 
         mGame.batch.end();
+
+        mGuiCamera.update();
+        mGame.batch.setProjectionMatrix(mGuiCamera.combined);
+        mGame.batch.begin();
+        mFont.draw(mGame.batch, "HighScore: " + mHighScore, 16, GUI_HEIGHT - 15);
+        mFont.draw(mGame.batch, "Score: " + mScore, 16, GUI_HEIGHT - 35);
+        mGame.batch.end();
     }
 
     private void update(final float delta) {
@@ -174,6 +190,15 @@ class GameScreen extends ScreenAdapter {
         mHeightSoFar = Math.max(mPlayer.getY(), mHeightSoFar);
 
         checkCollision();
+
+        checkGameOver();
+    }
+
+    private void checkGameOver() {
+        if (mHeightSoFar - CAMERA_HEIGHT / 2 > mPlayer.getY()) {
+            Gdx.app.log("JumpActionGame", "GAMEOVER");
+            mGameState = GameState.Gameover;
+        }
     }
 
     /**
@@ -182,6 +207,7 @@ class GameScreen extends ScreenAdapter {
     private void checkCollision() {
         // UFOに当たったらゴール
         if (mPlayer.getBoundingRectangle().overlaps(mUfo.getBoundingRectangle())) {
+            Gdx.app.log("JumpActionGame", "CLEAR");
             mGameState = GameState.Gameover;
             return;
         }
@@ -192,6 +218,10 @@ class GameScreen extends ScreenAdapter {
             }
             if (mPlayer.getBoundingRectangle().overlaps(star.getBoundingRectangle())) {
                 star.get();
+                mScore++;
+                if (mScore > mHighScore) {
+                    mHighScore = mScore;
+                }
                 break;
             }
         }

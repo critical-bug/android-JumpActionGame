@@ -20,6 +20,8 @@ class GameScreen extends ScreenAdapter {
     static final float GRAVITY = -12f;
     static final float WORLD_WIDTH = 10f;
     static final float WORLD_HEIGHT = CAMERA_HEIGHT * 20; // 20画面分登れば終了;
+    private static final float GUI_WIDTH = 320;
+    private static final float GUI_HEIGHT = 480;
     private final JumpActionGame mGame;
     private final Sprite mBg;
     private final OrthographicCamera mCamera;
@@ -30,6 +32,8 @@ class GameScreen extends ScreenAdapter {
     private final Ufo mUfo;
     private final Player mPlayer;
     private final Vector3 mTouchPoint;
+    private final OrthographicCamera mGuiCamera;
+    private final FitViewport mGuiViewPort;
     private GameState mGameState;
     private float mHeightSoFar;
 
@@ -46,6 +50,11 @@ class GameScreen extends ScreenAdapter {
         mCamera = new OrthographicCamera();
         mCamera.setToOrtho(false, CAMERA_WIDTH, CAMERA_HEIGHT);
         mViewPort = new FitViewport(CAMERA_WIDTH, CAMERA_HEIGHT);
+
+        // GUI用のカメラを設定する
+        mGuiCamera = new OrthographicCamera(); // ←追加する
+        mGuiCamera.setToOrtho(false, GUI_WIDTH, GUI_HEIGHT); // ←追加する
+        mGuiViewPort = new FitViewport(GUI_WIDTH, GUI_HEIGHT, mGuiCamera);
 
         mRandom = new Random();
         mSteps = new ArrayList<Step>();
@@ -97,6 +106,10 @@ class GameScreen extends ScreenAdapter {
 
         update(delta);
 
+        if (mPlayer.getY() > mCamera.position.y) {
+            mCamera.position.y = mPlayer.getY();
+        }
+
         // カメラの座標をアップデート（計算）し、スプライトの表示に反映させる
         mCamera.update();
         mGame.batch.setProjectionMatrix(mCamera.combined);
@@ -138,9 +151,9 @@ class GameScreen extends ScreenAdapter {
     private void updatePlaying(final float delta) {
         float accel = 0;
         if (Gdx.input.isTouched()) {
-            mViewPort.unproject(mTouchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-            Rectangle left = new Rectangle(0, 0, CAMERA_WIDTH / 2, CAMERA_HEIGHT);
-            Rectangle right = new Rectangle(CAMERA_WIDTH / 2, 0, CAMERA_WIDTH / 2, CAMERA_HEIGHT);
+            mGuiViewPort.unproject(mTouchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+            Rectangle left = new Rectangle(0, 0, GUI_WIDTH / 2, GUI_HEIGHT);
+            Rectangle right = new Rectangle(GUI_WIDTH / 2, 0, GUI_WIDTH / 2, GUI_HEIGHT);
             if (left.contains(mTouchPoint.x, mTouchPoint.y)) {
                 accel = 5.0f;
             }
@@ -213,5 +226,6 @@ class GameScreen extends ScreenAdapter {
     @Override
     public void resize(final int width, final int height) {
         mViewPort.update(width, height);
+        mGuiViewPort.update(width, height);
     }
 }

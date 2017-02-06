@@ -1,6 +1,7 @@
 package jp.techacademy.critical_bug.jumpactiongame;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -36,6 +37,7 @@ class GameScreen extends ScreenAdapter {
     private final OrthographicCamera mGuiCamera;
     private final FitViewport mGuiViewPort;
     private final BitmapFont mFont;
+    private final Preferences mPrefs;
     private GameState mGameState;
     private float mHeightSoFar;
     private int mScore;
@@ -69,7 +71,8 @@ class GameScreen extends ScreenAdapter {
         mFont = new BitmapFont(Gdx.files.internal("font.fnt"), Gdx.files.internal("font.png"), false);
         mFont.getData().setScale(0.8f);
         mScore = 0;
-        mHighScore = 0;
+        mPrefs = Gdx.app.getPreferences("jp.techacademy.critical_bug.jumpactiongame");
+        mHighScore = mPrefs.getInteger("HIGHSCORE", 0);
 
         float y = createStage();
 
@@ -221,6 +224,8 @@ class GameScreen extends ScreenAdapter {
                 mScore++;
                 if (mScore > mHighScore) {
                     mHighScore = mScore;
+                    mPrefs.putInteger("HIGHSCORE", mHighScore);
+                    mPrefs.flush();
                 }
                 break;
             }

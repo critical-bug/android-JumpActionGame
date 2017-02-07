@@ -4,16 +4,21 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 class JumpActionGame extends Game {
-	SpriteBatch batch;
+    SpriteBatch batch;
+    public ActivityRequestHandler requestHandler;
 
-	@Override
-	public void create () {
-		batch = new SpriteBatch();
-		setScreen(new GameScreen(this));
-	}
+    public JumpActionGame(final ActivityRequestHandler activityRequestHandler) {
+        requestHandler = activityRequestHandler;
+    }
 
-	@Override
-	public void dispose () {
+    @Override
+    public void create() {
+        batch = new SpriteBatch();
+        setScreen(new GameScreen(this));
+    }
+
+    @Override
+    public void dispose () {
 		batch.dispose();
 	}
 }

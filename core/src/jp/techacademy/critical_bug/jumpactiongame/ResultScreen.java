@@ -21,6 +21,9 @@ public class ResultScreen extends ScreenAdapter {
 
     public ResultScreen(final JumpActionGame game, final int score) {
         mGame = game;
+        if (mGame.requestHandler != null) {
+            mGame.requestHandler.showAds(true);
+        }
         mScore = score;
 
         Texture bgTexture = new Texture("resultback.png");
@@ -50,6 +53,9 @@ public class ResultScreen extends ScreenAdapter {
         mGame.batch.end();
 
         if (Gdx.input.justTouched()) {
+            if (mGame.requestHandler != null) {
+                mGame.requestHandler.showAds(false);
+            }
             mGame.setScreen(new GameScreen(mGame));
         }
     }

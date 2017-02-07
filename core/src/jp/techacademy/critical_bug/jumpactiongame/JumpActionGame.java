@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 class JumpActionGame extends Game {
     SpriteBatch batch;
-    public ActivityRequestHandler requestHandler;
+    public final ActivityRequestHandler requestHandler;
 
     public JumpActionGame(final ActivityRequestHandler activityRequestHandler) {
         requestHandler = activityRequestHandler;

@@ -3,7 +3,6 @@ package jp.techacademy.critical_bug.jumpactiongame;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -19,24 +18,7 @@ public class AndroidLauncher extends AndroidApplication implements ActivityReque
     static final int SHOW_ADS = 1;
 
     private AdView mAdView;
-    private Handler mHandler = new Handler()
-    {
-        @Override
-        public void handleMessage(Message msg) {
-            switch(msg.what) {
-                case SHOW_ADS:
-                {
-                    mAdView.setVisibility(View.VISIBLE);
-                    break;
-                }
-                case HIDE_ADS:
-                {
-                    mAdView.setVisibility(View.GONE);
-                    break;
-                }
-            }
-        }
-    };
+    private Handler mHandler;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -51,6 +33,7 @@ public class AndroidLauncher extends AndroidApplication implements ActivityReque
         mAdView.setBackgroundColor(Color.BLACK);
         final AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
+        mHandler = new ShowAdsHandler(mAdView);
 
         final RelativeLayout layout = new RelativeLayout(this);
         layout.addView(gameView,

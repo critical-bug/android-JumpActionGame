@@ -31,6 +31,7 @@ class GameScreen extends ScreenAdapter {
     private final Random mRandom;
     private final ArrayList<Step> mSteps;
     private final ArrayList<Star> mStars;
+    private final ArrayList<Enemy> mEnemies;
     private final Ufo mUfo;
     private final Player mPlayer;
     private final Vector3 mTouchPoint;
@@ -65,6 +66,7 @@ class GameScreen extends ScreenAdapter {
         mRandom = new Random();
         mSteps = new ArrayList<Step>();
         mStars = new ArrayList<Star>();
+        mEnemies = new ArrayList<Enemy>();
         mGameState = GameState.Ready;
         mTouchPoint = new Vector3();
 
@@ -86,6 +88,7 @@ class GameScreen extends ScreenAdapter {
     private float createStage() {
         Texture stepTexture = new Texture("step.png");
         Texture starTexture = new Texture("star.png");
+        Texture enemyTexture = new Texture("uma.png");
 
         // StepとStarをゴールの高さまで配置していく
         float y = 0;
@@ -103,6 +106,12 @@ class GameScreen extends ScreenAdapter {
                 Star star = new Star(starTexture, 0, 0, 72, 72);
                 star.setPosition(step.getX() + mRandom.nextFloat(), step.getY() + Star.STAR_HEIGHT + mRandom.nextFloat() * 3);
                 mStars.add(star);
+            }
+
+            if (mRandom.nextFloat() > 0.8f) {
+                final Enemy enemy = new Enemy(enemyTexture, 0, 0, 72, 72);
+                enemy.setPosition(step.getX() + mRandom.nextFloat(), step.getY() + Enemy.HEIGHT + mRandom.nextFloat() * 3);
+                mEnemies.add(enemy);
             }
 
             y += (maxJumpHeight - 0.5f);
@@ -135,6 +144,9 @@ class GameScreen extends ScreenAdapter {
         }
         for (final Star star : mStars) {
             star.draw(mGame.batch);
+        }
+        for (final Enemy enemy : mEnemies) {
+            enemy.draw(mGame.batch);
         }
         mUfo.draw(mGame.batch);
         mPlayer.draw(mGame.batch);
